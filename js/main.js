@@ -11,6 +11,7 @@
 // });
 // }
 
+function getPokemon(){
 const URLv2 = "https://pokeapi.co/api/v2/pokemon/?limit=251"
 fetch(URLv2)  
     .then(function(reponse){
@@ -34,7 +35,7 @@ fetch(URLv2)
         });
         
         // document.body.innerHTML+=`<img src="https://pokeapi.co/api/v2/pokemon/${pokemon.name}" alt="${pokemon.name} "></img>`
-
+    };
 
 function displayPokemon(name){
     const URLindiv = "https://pokeapi.co/api/v2/pokemon/"+name;
@@ -48,14 +49,4 @@ function displayPokemon(name){
     })
 }
 
-
-
-
-
-
-
-        // const URLindiv = "https://pokeapi.co/api/v2/pokemon/"+pokemon.name;
-        // fetch(URLindiv)
-        // .then(function(poke){
-        //     document.body.innerHTML+=`<img src='${poke.sprites['front_default']}'>`
-        // })
+getPokemon();
