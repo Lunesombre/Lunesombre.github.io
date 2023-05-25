@@ -1,3 +1,6 @@
 ### Consignes : 
 
-- utiliser le pakéAPI pour afficher 20 pokemon
+- utiliser le pokéAPI pour afficher les images de 20 pokemons :
+
+	- J'ai fait une première version pour afficher 20 pokémons aléatoires avec une boucle for
+	- Deuxième version avec un deuxième appel au webservice via un fetch dans le fetch
