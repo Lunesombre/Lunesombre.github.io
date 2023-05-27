@@ -1,0 +1,23 @@
+body{
+    background-color: rgb(20, 31, 31);
+    color :rgb(177, 205, 205);
+    text-align : center;
+}
+.cards {
+    background-color: bisque;
+    color :rgb(101, 219, 42);
+    font-size : 1.2em;
+    padding : 1.5em;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.card{
+    background-color: rgba(20, 31, 31,0.9);
+    box-shadow: inset -3px -3px 15px rgb(70, 134, 70), 10px 8px 12px rgb(27, 26, 26);
+    margin : 1em;
+    padding : 0.5em;
+    padding-bottom: 0.8em;
+    border-radius: 20px;
+}

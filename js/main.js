@@ -1,70 +1,76 @@
-// for(i=0; i<20; i++)
-// {
-// const URL = "https://pokeapi.co/api/v2/pokemon/"+Math.floor(Math.random()*800);
-// fetch(URL)  
-// .then(function(reponse){
-//     return reponse.json();
-// })
-// .then(function(json){
-//     console.log(json)
-//     document.body.innerHTML+=`<img src='${json.sprites['front_default']}'>`
-// });
-// }
+// V4
 
-// function getPokemon(){
-// const URLv2 = "https://pokeapi.co/api/v2/pokemon/?limit=251"
-// fetch(URLv2)  
-//     .then(function(reponse){
-//         // console.log(reponse);
-//         return reponse.json();
-//     })
-//     .then(function(json){
-//         // console.log(json);
-//         return json.results;
-//     })
-//     .then(function(test){
-//         const pokemons = test
-//         pokemons.forEach(pokemon => 
-//             // console.log(pokemon.name)
-//             displayPokemon(pokemon.name)
-//             )
-            
-//         })
-//         .catch(function(erreur){
-//             console.error(erreur);
-//         });
-        
-//         // document.body.innerHTML+=`<img src="https://pokeapi.co/api/v2/pokemon/${pokemon.name}" alt="${pokemon.name} "></img>`
-//     };
+let nextUrl = null;
+let previousUrl = null;
+const navigationContainer = document.createElement("div");
+navigationContainer.className = "navigation";
 
-// function displayPokemon(name){
-//     const URLindiv = "https://pokeapi.co/api/v2/pokemon/"+name;
-//     fetch(URLindiv)
-//     .then(function(reponse){
-//         console.log(reponse);
-//         return reponse.json();
-//     })
-//     .then(function(poke){
-//         document.body.innerHTML+=`<img src='${poke.sprites['front_default']}'>`
-//     })
-// }
+async function getPokemon(url) {
+    try {
+        const response = await fetch(url);
+        const json = await response.json();
+        const pokeList = json.results;
+        nextUrl = json.next;
+        previousUrl = json.previous;
+        await Promise.all(pokeList.map(pokemon => displayPokemon(pokemon.name)));
+        updateNavigationbuttons();
+    } catch (error) {
+        console.error("Error fetching Pokemon: ", error);
+    }
+}
 
-// getPokemon();
+async function displayPokemon(name) {
+    const URLindiv = `https://pokeapi.co/api/v2/pokemon/${name}`;
+    try {
+        const response = await fetch(URLindiv);
+        const pokemon = await response.json();
+        const card = document.createElement('div');
+        card.className='card';
+        card.id= 'pkm_n'+pokemon.id;
+        const image = document.createElement("img");
+        image.src = pokemon.sprites["front_default"];
+        image.alt = "Picture of "+pokemon.name;
+        image.title = `N° ${pokemon.id} : ${pokemon.name}`;
+        const name = document.createElement("div")
+        name.textContent = pokemon.name[0].toUpperCase()+pokemon.name.slice(1);
+        card.appendChild(image);
+        card.appendChild(name);
+        const cards = document.querySelector(".cards")
+        cards.appendChild(card);
+    } catch (error) {
+        console.error(`Error fetching the Pokemon ${name} details: `, error);
+    }
+}
 
-//V3
-async function getPokemon(){
-    const URLv3 = "https://pokeapi.co/api/v2/pokemon/"
-    let reponse = await fetch(URLv3); 
-    let json = await reponse.json();
-    let pokeListe = json.results; 
-    pokeListe.forEach(pokemon => displayPokemon(pokemon.name));
-    };
+function updateNavigationbuttons(){
+    navigationContainer.innerHTML="";
     
-async function displayPokemon(name){
-    const URLindiv = "https://pokeapi.co/api/v2/pokemon/"+name;
-    let reponse = await fetch(URLindiv);
-    let pokemon = await reponse.json();
-    document.body.innerHTML+=`<img src='${pokemon.sprites['front_default']}'>`;
-    };
+    const previousButton = document.createElement("button");
+    // if(previousUrl == null){
+    //     previousButton.disabled=true;
+    // }else{
+    //     previousButton.disabled=false;
+    // };
+    // I'm leaving the previous "if" commented in the code because I found the notation below while poking around on the internet but I'm not used to it, that way i won't forget how I did it earlier - silly me for not versionning that part.
+    previousButton.disabled = !previousUrl;
 
-getPokemon();
+    previousButton.textContent = "Previous";
+    previousButton.addEventListener('click', ()=> navigate(previousUrl));
+    navigationContainer.appendChild(previousButton);
+    
+    const nextButton = document.createElement("button");
+    nextButton.disabled = !nextUrl;
+    nextButton.textContent = "Next";
+    nextButton.addEventListener('click', ()=> navigate(nextUrl));
+    navigationContainer.appendChild(nextButton);
+
+}
+
+function navigate(url) {
+    const cards = document.querySelector(".cards");
+    cards.innerHTML = "";
+    getPokemon(url);
+}
+
+document.body.appendChild(navigationContainer)
+getPokemon("https://pokeapi.co/api/v2/pokemon/?limit=20");
